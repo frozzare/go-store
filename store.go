@@ -1,72 +1,58 @@
 package store
 
-import "sync"
+import (
+	"fmt"
+	"sync"
 
-var instances map[string]*Store
+	"github.com/frozzare/go-store/driver"
+	"github.com/frozzare/go-store/rwmutex"
+)
 
+var (
+	driversMu sync.RWMutex
+	drivers   = make(map[string]driver.Driver)
+)
+
+// init register the default store driver.
 func init() {
-	instances = make(map[string]*Store)
+	Register("rwmutex", &rwmutex.Driver{})
 }
 
-// Store represents the store.
-type Store struct {
-	lock sync.RWMutex
-	data map[string]interface{}
-}
+// Register makes a store driver available by the provided name.
+// If Register is called twice with the same name or if driver is nil,
+// it panics.
+func Register(name string, driver driver.Driver) {
+	driversMu.Lock()
 
-// New creates a new store.
-func New() *Store {
-	return &Store{data: make(map[string]interface{})}
-}
+	defer driversMu.Unlock()
 
-// Instance return store instance.
-func Instance(params ...string) *Store {
-	key := ""
-
-	if len(params) > 0 {
-		key = params[0]
+	if driver == nil {
+		panic("store: Register driver is nil")
 	}
 
-	if instances[key] == nil {
-		instances[key] = New()
+	if _, dup := drivers[name]; dup {
+		panic("store: Register called twice for driver " + name)
 	}
 
-	return instances[key]
+	drivers[name] = driver
 }
 
-// Count returns numbers of keys in store.
-func (s *Store) Count() int {
-	s.lock.RLock()
-	defer s.lock.RUnlock()
-	return len(s.data)
-}
+// Open opens a store driver and return it's implementation
+// or a error if driver is not found.
+func Open(args ...interface{}) (driver.Driver, error) {
+	name := "rwmutex"
+	if len(args) > 0 {
+		name = args[0].(string)
+		args = args[1:]
+	}
 
-// Exists returns true when a key exists false when not existing in store.
-func (s *Store) Exists(key string) bool {
-	s.lock.RLock()
-	defer s.lock.RUnlock()
+	driversMu.RLock()
+	driver, ok := drivers[name]
+	driversMu.RUnlock()
 
-	_, exists := s.data[key]
-	return exists
-}
+	if !ok {
+		return nil, fmt.Errorf("store: unknown driver %q (forgotten import?)", name)
+	}
 
-// Get value from key in store.
-func (s *Store) Get(key string) interface{} {
-	s.lock.RLock()
-	defer s.lock.RUnlock()
-	return s.data[key]
-}
-
-// Set key with value in store.
-func (s *Store) Set(key string, value interface{}) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-	s.data[key] = value
-}
-
-// Delete key from store.
-func (s *Store) Delete(key string) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-	delete(s.data, key)
+	return driver.Open(args...), nil
 }
