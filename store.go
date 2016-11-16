@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/frozzare/go-store/driver"
-	"github.com/frozzare/go-store/redis"
-	"github.com/frozzare/go-store/rwmutex"
+	"github.com/frozzare/go-store/drivers/redis"
+	"github.com/frozzare/go-store/drivers/rwmutex"
 )
 
 var (
