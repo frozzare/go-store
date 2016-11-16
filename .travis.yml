@@ -1,9 +1,13 @@
 language: go
+
 go:
  - 1.5
  - 1.6
  - 1.7
  - tip
+
+services:
+  - redis-server
 
 script:
  - go get -d -v ./...
