@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/frozzare/go-store/driver"
+	"github.com/frozzare/go-store/redis"
 	"github.com/frozzare/go-store/rwmutex"
 )
 
@@ -16,6 +17,7 @@ var (
 // init register the default store driver.
 func init() {
 	Register("rwmutex", &rwmutex.Driver{})
+	Register("redis", &redis.Driver{})
 }
 
 // Register makes a store driver available by the provided name.
