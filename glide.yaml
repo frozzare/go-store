@@ -1,0 +1,7 @@
+package: github.com/frozzare/go-store
+import:
+- package: gopkg.in/redis.v3
+  version: ^5.0.2
+testImport:
+- package: github.com/frozzare/go-assert
+  version: ^1.0.1

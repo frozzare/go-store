@@ -14,7 +14,7 @@ var (
 // Driver represents a rwmutex driver.
 type Driver struct {
 	lock sync.RWMutex
-	data map[string]interface{}
+	data map[string][]byte
 }
 
 // Open creates a new RWMutex store.
@@ -29,7 +29,7 @@ func Open(args ...interface{}) driver.Driver {
 	defer instancesMu.Unlock()
 
 	if instances[name] == nil {
-		instances[name] = &Driver{data: make(map[string]interface{})}
+		instances[name] = &Driver{data: make(map[string][]byte)}
 	}
 
 	return instances[name]
@@ -41,10 +41,10 @@ func (s *Driver) Open(args ...interface{}) driver.Driver {
 }
 
 // Count returns numbers of keys in store.
-func (s *Driver) Count() int {
+func (s *Driver) Count() int64 {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
-	return len(s.data)
+	return int64(len(s.data))
 }
 
 // Exists returns true when a key exists false when not existing in store.
@@ -57,22 +57,24 @@ func (s *Driver) Exists(key string) bool {
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) interface{} {
+func (s *Driver) Get(key string) ([]byte, error) {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
-	return s.data[key]
+	return s.data[key], nil
 }
 
 // Set key with value in store.
-func (s *Driver) Set(key string, value interface{}) {
+func (s *Driver) Set(key string, value []byte) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	s.data[key] = value
+	return nil
 }
 
 // Delete key from store.
-func (s *Driver) Delete(key string) {
+func (s *Driver) Delete(key string) error {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	delete(s.data, key)
+	return nil
 }
