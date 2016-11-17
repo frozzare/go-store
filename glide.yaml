@@ -1,0 +1,12 @@
+package: github.com/frozzare/go-store
+import:
+- package: github.com/boltdb/bolt
+  version: v1.3.0
+- package: github.com/syndtr/goleveldb
+  subpackages:
+  - leveldb
+  - leveldb/opt
+- package: gopkg.in/redis.v5
+testImport:
+- package: github.com/frozzare/go-assert
+  version: v1.0.1
