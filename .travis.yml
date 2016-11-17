@@ -9,6 +9,9 @@ go:
 services:
   - redis-server
 
+env:
+  - GO15VENDOREXPERIMENT=1
+
 script:
  - go get -d -v ./...
  - go get github.com/frozzare/go-assert
