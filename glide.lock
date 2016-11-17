@@ -1,5 +1,5 @@
-hash: 4e17030918dbe1b6bc3c0186aa29501c5d8881d4dacfcb4ce450a9584976469a
-updated: 2016-11-17T12:35:26.700301427+01:00
+hash: 4ed678754239f38e1ff234ee9cd71fc7d3c8f031f9a1aa518184a2864ff19e66
+updated: 2016-11-17T12:55:41.316114138+01:00
 imports:
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
@@ -26,8 +26,6 @@ imports:
   - unix
 - name: gopkg.in/bsm/ratelimit.v1
   version: db14e161995a5177acef654cb0dd785e8ee8bc22
-- name: gopkg.in/redis.v3
-  version: b6bfe529a846fbb9a58c832ce71c61b6fde12c15
 - name: gopkg.in/redis.v5
   version: b6bfe529a846fbb9a58c832ce71c61b6fde12c15
   subpackages:
