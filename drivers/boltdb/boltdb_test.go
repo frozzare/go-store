@@ -1,18 +1,13 @@
-package redis
+package boltdb
 
 import (
 	"testing"
 
 	"github.com/frozzare/go-assert"
-	"gopkg.in/redis.v3"
 )
 
 func TestCustomClient(t *testing.T) {
-	s := Open(redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
-	}))
+	s := Open("/tmp/custom.db")
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
@@ -28,15 +23,15 @@ func TestCustomClient(t *testing.T) {
 func TestGetSetSimple(t *testing.T) {
 	s := Open()
 
-	v, _ := s.Get("name")
+	v, _ := s.Get("name1")
 	assert.Nil(t, v)
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name1", []byte("Fredrik"))
 
-	v, _ = s.Get("name")
+	v, _ = s.Get("name1")
 	assert.Equal(t, "Fredrik", string(v))
 
-	s.Delete("name")
+	s.Delete("name1")
 }
 
 func TestCount(t *testing.T) {
@@ -44,35 +39,35 @@ func TestCount(t *testing.T) {
 
 	assert.Equal(t, 0, s.Count())
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name2", []byte("Fredrik"))
 	assert.Equal(t, 1, s.Count())
 
-	s.Delete("name")
+	s.Delete("name2")
 }
 
 func TestExists(t *testing.T) {
 	s := Open()
 
-	assert.False(t, s.Exists("name"))
+	assert.False(t, s.Exists("name3"))
 
-	s.Set("name", []byte("Fredrik"))
-	assert.True(t, s.Exists("name"))
+	s.Set("name3", []byte("Fredrik"))
+	assert.True(t, s.Exists("name3"))
 
-	s.Delete("name")
+	s.Delete("name3")
 }
 
 func TestDeleteSimple(t *testing.T) {
 	s := Open()
 
-	v, _ := s.Get("name")
+	v, _ := s.Get("name4")
 	assert.Nil(t, v)
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name4", []byte("Fredrik"))
 
-	v, _ = s.Get("name")
+	v, _ = s.Get("name4")
 	assert.Equal(t, "Fredrik", string(v))
 
-	s.Delete("name")
-	v, _ = s.Get("name")
+	s.Delete("name4")
+	v, _ = s.Get("name4")
 	assert.Nil(t, v)
 }

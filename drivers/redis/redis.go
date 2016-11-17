@@ -27,7 +27,7 @@ func Open(args ...interface{}) driver.Driver {
 	return &Driver{client: client}
 }
 
-// Open creates a new RWMutex store with a specified instance.
+// Open creates a new Redis store with a specified instance.
 func (s *Driver) Open(args ...interface{}) driver.Driver {
 	return Open(args...)
 }
@@ -61,4 +61,9 @@ func (s *Driver) Set(key string, value []byte) error {
 // Delete key from store.
 func (s *Driver) Delete(key string) error {
 	return s.client.Del(key).Err()
+}
+
+// Close does not exists for Redis driver.
+func (s *Driver) Close() error {
+	return nil
 }

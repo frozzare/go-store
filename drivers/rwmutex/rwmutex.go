@@ -78,3 +78,8 @@ func (s *Driver) Delete(key string) error {
 	delete(s.data, key)
 	return nil
 }
+
+// Close does not exists for RWMutex driver.
+func (s *Driver) Close() error {
+	return nil
+}

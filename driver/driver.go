@@ -20,4 +20,7 @@ type Driver interface {
 
 	// Set key value in store.
 	Set(key string, value []byte) error
+
+	// Close will close the driver connection if needed.
+	Close() error
 }
