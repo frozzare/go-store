@@ -3,8 +3,8 @@ package store
 import (
 	"testing"
 
-	assert "github.com/frozzare/go-assert"
-	"github.com/frozzare/go-store/rwmutex"
+	"github.com/frozzare/go-assert"
+	"github.com/frozzare/go-store/drivers/rwmutex"
 )
 
 func TestOpenNoDriver(t *testing.T) {
