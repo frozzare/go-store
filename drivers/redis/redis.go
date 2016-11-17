@@ -2,7 +2,7 @@ package redis
 
 import (
 	"github.com/frozzare/go-store/driver"
-	"gopkg.in/redis.v3"
+	"gopkg.in/redis.v5"
 )
 
 // Driver represents a Redis driver.

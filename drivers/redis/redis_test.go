@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/frozzare/go-assert"
-	"gopkg.in/redis.v3"
+	"gopkg.in/redis.v5"
 )
 
 func TestCustomClient(t *testing.T) {
