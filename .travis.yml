@@ -13,6 +13,6 @@ env:
   - GO15VENDOREXPERIMENT=1
 
 script:
- - go get -d -v ./...
- - go get github.com/frozzare/go-assert
- - go test -v ./...
+ - which glide >/dev/null || curl https://glide.sh/get | sh
+ - glide install
+ - go test $(go list ./... | grep -v /vendor/)
