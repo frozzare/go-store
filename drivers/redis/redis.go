@@ -18,7 +18,7 @@ func Open(args ...interface{}) driver.Driver {
 	var client *redis.Client
 
 	if len(args) > 0 && args[0] != nil {
-		client = args[0].(*redis.Client)
+		client = redis.NewClient(args[0].(*redis.Options))
 	} else {
 		client = redis.NewClient(&redis.Options{
 			Addr:     "localhost:6379",
