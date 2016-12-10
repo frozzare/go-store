@@ -1,6 +1,8 @@
 package rwmutex
 
 import (
+	"encoding/json"
+	"reflect"
 	"sync"
 
 	"github.com/frozzare/go-store/driver"
@@ -57,17 +59,41 @@ func (s *Driver) Exists(key string) bool {
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) ([]byte, error) {
+func (s *Driver) Get(key string) (interface{}, error) {
 	s.lock.RLock()
+
 	defer s.lock.RUnlock()
-	return s.data[key], nil
+
+	var value interface{}
+	if err := json.Unmarshal(s.data[key], &value); err == nil {
+		return value, nil
+	}
+
+	if len(s.data[key]) == 0 {
+		return nil, nil
+	}
+
+	return string(s.data[key]), nil
 }
 
 // Set key with value in store.
-func (s *Driver) Set(key string, value []byte) error {
+func (s *Driver) Set(key string, value interface{}) error {
 	s.lock.Lock()
+
 	defer s.lock.Unlock()
-	s.data[key] = value
+
+	if reflect.TypeOf(value).Kind() != reflect.String {
+		value, err := json.Marshal(value)
+
+		if err != nil {
+			return err
+		}
+
+		s.data[key] = value
+	} else {
+		s.data[key] = []byte(value.(string))
+	}
+
 	return nil
 }
 

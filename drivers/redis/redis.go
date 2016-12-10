@@ -55,10 +55,10 @@ func (s *Driver) Get(key string) (interface{}, error) {
 
 	var value interface{}
 	if err = json.Unmarshal([]byte(res), &value); err == nil {
-		return value, err
+		return value, nil
 	}
 
-	return res, err
+	return res, nil
 }
 
 // Set key with value in store.

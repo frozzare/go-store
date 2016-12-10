@@ -12,12 +12,26 @@ func TestGetSetSimple(t *testing.T) {
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name", "Fredrik")
 
 	v, _ = s.Get("name")
-	assert.Equal(t, "Fredrik", string(v))
+	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name")
+}
+
+func TestGetSetMap(t *testing.T) {
+	s := Open()
+
+	v, _ := s.Get("map")
+	assert.Nil(t, v)
+
+	s.Set("map", map[string]interface{}{"hello": "world"})
+
+	v, _ = s.Get("map")
+	assert.Equal(t, "world", v.(map[string]interface{})["hello"].(string))
+
+	s.Delete("map")
 }
 
 func TestCount(t *testing.T) {
@@ -48,10 +62,10 @@ func TestDeleteSimple(t *testing.T) {
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name", "Fredrik")
 
 	v, _ = s.Get("name")
-	assert.Equal(t, "Fredrik", string(v))
+	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name")
 	v, _ = s.Get("name")
@@ -62,7 +76,7 @@ func TestInstance(t *testing.T) {
 	assert.Equal(t, 0, Open().Count())
 	assert.Equal(t, 0, Open("cache").Count())
 
-	Open("cache").Set("name", []byte("Fredrik"))
+	Open("cache").Set("name", "Fredrik")
 
 	assert.Equal(t, 0, Open().Count())
 	assert.Equal(t, 1, Open("cache").Count())

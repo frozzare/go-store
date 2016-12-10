@@ -99,7 +99,7 @@ func (s *Driver) Get(key string) (interface{}, error) {
 
 	var value interface{}
 	if err = json.Unmarshal([]byte(res), &value); err == nil {
-		return value, err
+		return value, nil
 	}
 
 	return string(res), nil
