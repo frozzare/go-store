@@ -56,7 +56,6 @@ func TestExists(t *testing.T) {
 	s.Delete("name")
 }
 
-/*
 func TestDeleteSimple(t *testing.T) {
 	s := Open()
 
@@ -72,4 +71,3 @@ func TestDeleteSimple(t *testing.T) {
 	v, _ = s.Get("name")
 	assert.Nil(t, v)
 }
-*/

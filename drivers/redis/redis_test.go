@@ -18,10 +18,10 @@ func TestCustomClient(t *testing.T) {
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name", "Fredrik")
 
 	v, _ = s.Get("name")
-	assert.Equal(t, "Fredrik", string(v))
+	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name")
 }
