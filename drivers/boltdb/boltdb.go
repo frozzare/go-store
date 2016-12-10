@@ -3,7 +3,9 @@ package boltdb
 import (
 	"bytes"
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"os"
 
@@ -32,15 +34,15 @@ func (s *Driver) db() *bolt.DB {
 	mode := os.FileMode(0600)
 	options := &bolt.Options{}
 
-	if len(s.args) > 0 {
+	if len(s.args) > 0 && s.args[0] != nil {
 		path = s.args[0].(string)
 	}
 
-	if len(s.args) > 1 {
+	if len(s.args) > 1 && s.args[1] != nil {
 		mode = s.args[1].(os.FileMode)
 	}
 
-	if len(s.args) > 2 {
+	if len(s.args) > 2 && s.args[2] != nil {
 		options = s.args[2].(*bolt.Options)
 	}
 
@@ -98,11 +100,11 @@ func (s *Driver) Exists(key string) bool {
 		return false
 	}
 
-	return len(value) > 0
+	return value != nil
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) (value []byte, err error) {
+func (s *Driver) Get(key string) (value interface{}, err error) {
 	defer s.Close()
 
 	err = s.db().View(func(tx *bolt.Tx) error {
@@ -114,7 +116,15 @@ func (s *Driver) Get(key string) (value []byte, err error) {
 		var buffer bytes.Buffer
 		buffer.Write(bucket.Get([]byte(key)))
 
-		value = buffer.Bytes()
+		bytes := buffer.Bytes()
+
+		var js interface{}
+		if err = json.Unmarshal(bytes, &js); err == nil {
+			value = js
+		} else if len(bytes) > 0 {
+			value = string(bytes)
+		}
+
 		return nil
 	})
 
@@ -122,7 +132,7 @@ func (s *Driver) Get(key string) (value []byte, err error) {
 }
 
 // Set key with value in store.
-func (s *Driver) Set(key string, value []byte) error {
+func (s *Driver) Set(key string, value interface{}) error {
 	defer s.Close()
 
 	return s.db().Update(func(tx *bolt.Tx) error {
@@ -131,7 +141,18 @@ func (s *Driver) Set(key string, value []byte) error {
 			return err
 		}
 
-		err = bucket.Put([]byte(key), value)
+		if reflect.TypeOf(value).Kind() != reflect.String {
+			value, err := json.Marshal(value)
+
+			if err != nil {
+				return err
+			}
+
+			err = bucket.Put([]byte(key), value)
+		} else {
+			err = bucket.Put([]byte(key), []byte(value.(string)))
+		}
+
 		if err != nil {
 			return err
 		}

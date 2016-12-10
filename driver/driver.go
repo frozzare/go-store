@@ -13,13 +13,13 @@ type Driver interface {
 	Exists(key string) bool
 
 	// Get returns the value for a key if any.
-	Get(key string) ([]byte, error)
+	Get(key string) (interface{}, error)
 
 	// Open opens a new store.
 	Open(args ...interface{}) Driver
 
 	// Set key value in store.
-	Set(key string, value []byte) error
+	Set(key string, value interface{}) error
 
 	// Close will close the driver connection if needed.
 	Close() error

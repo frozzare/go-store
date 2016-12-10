@@ -1,6 +1,9 @@
 package leveldb
 
 import (
+	"encoding/json"
+	"reflect"
+
 	"github.com/frozzare/go-store/driver"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/opt"
@@ -25,11 +28,11 @@ func (s *Driver) db() *leveldb.DB {
 	path := "/tmp/store.leveldb"
 	var options *opt.Options
 
-	if len(s.args) > 0 {
+	if len(s.args) > 0 && s.args[0] != nil {
 		path = s.args[0].(string)
 	}
 
-	if len(s.args) > 1 {
+	if len(s.args) > 1 && s.args[1] != nil {
 		options = s.args[1].(*opt.Options)
 	}
 
@@ -85,17 +88,38 @@ func (s *Driver) Exists(key string) (ret bool) {
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) (value []byte, err error) {
+func (s *Driver) Get(key string) (interface{}, error) {
 	defer s.Close()
 
-	return s.db().Get([]byte(key), nil)
+	res, err := s.db().Get([]byte(key), nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var value interface{}
+	if err = json.Unmarshal([]byte(res), &value); err == nil {
+		return value, err
+	}
+
+	return string(res), nil
 }
 
 // Set key with value in store.
-func (s *Driver) Set(key string, value []byte) error {
+func (s *Driver) Set(key string, value interface{}) error {
 	defer s.Close()
 
-	return s.db().Put([]byte(key), value, nil)
+	if reflect.TypeOf(value).Kind() != reflect.String {
+		value, err := json.Marshal(value)
+
+		if err != nil {
+			return err
+		}
+
+		return s.db().Put([]byte(key), value, nil)
+	}
+
+	return s.db().Put([]byte(key), []byte(value.(string)), nil)
 }
 
 // Delete key from store.

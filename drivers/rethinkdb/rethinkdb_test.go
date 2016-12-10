@@ -1,13 +1,13 @@
-package boltdb
+package rethinkdb
 
 import (
 	"testing"
 
-	"github.com/frozzare/go-assert"
+	assert "github.com/frozzare/go-assert"
 )
 
-func TestCustomClient(t *testing.T) {
-	s := Open("/tmp/custom-boltdb.db")
+func TestGetSetSimple(t *testing.T) {
+	s := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
@@ -18,20 +18,6 @@ func TestCustomClient(t *testing.T) {
 	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name")
-}
-
-func TestGetSetSimple(t *testing.T) {
-	s := Open()
-
-	v, _ := s.Get("name1")
-	assert.Nil(t, v)
-
-	s.Set("name1", "Fredrik")
-
-	v, _ = s.Get("name1")
-	assert.Equal(t, "Fredrik", v.(string))
-
-	s.Delete("name1")
 }
 
 func TestGetSetMap(t *testing.T) {
@@ -53,35 +39,37 @@ func TestCount(t *testing.T) {
 
 	assert.Equal(t, 0, s.Count())
 
-	s.Set("name2", []byte("Fredrik"))
+	s.Set("name", []byte("Fredrik"))
 	assert.Equal(t, 1, s.Count())
 
-	s.Delete("name2")
+	s.Delete("name")
 }
 
 func TestExists(t *testing.T) {
 	s := Open()
 
-	assert.False(t, s.Exists("name3"))
+	assert.False(t, s.Exists("name"))
 
-	s.Set("name3", []byte("Fredrik"))
-	assert.True(t, s.Exists("name3"))
+	s.Set("name", []byte("Fredrik"))
+	assert.True(t, s.Exists("name"))
 
-	s.Delete("name3")
+	s.Delete("name")
 }
 
+/*
 func TestDeleteSimple(t *testing.T) {
 	s := Open()
 
-	v, _ := s.Get("name4")
+	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name4", "Fredrik")
+	s.Set("name", "Fredrik")
 
-	v, _ = s.Get("name4")
+	v, _ = s.Get("name")
 	assert.Equal(t, "Fredrik", v.(string))
 
-	s.Delete("name4")
-	v, _ = s.Get("name4")
+	s.Delete("name")
+	v, _ = s.Get("name")
 	assert.Nil(t, v)
 }
+*/

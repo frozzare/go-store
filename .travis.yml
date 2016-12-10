@@ -9,6 +9,9 @@ go:
 services:
   - redis-server
 
+addons:
+  rethinkdb: '2.3'
+
 env:
   - GO15VENDOREXPERIMENT=1
 

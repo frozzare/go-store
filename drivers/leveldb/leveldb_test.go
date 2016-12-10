@@ -6,21 +6,19 @@ import (
 	"github.com/frozzare/go-assert"
 )
 
-/*
 func TestCustomClient(t *testing.T) {
-	s := Open("/tmp/custom.db")
+	s := Open("/tmp/custom-leveldb.db")
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name", "Fredrik")
 
 	v, _ = s.Get("name")
-	assert.Equal(t, "Fredrik", string(v))
+	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name")
 }
-*/
 
 func TestGetSetSimple(t *testing.T) {
 	s := Open()
@@ -28,12 +26,26 @@ func TestGetSetSimple(t *testing.T) {
 	v, _ := s.Get("name1")
 	assert.Nil(t, v)
 
-	s.Set("name1", []byte("Fredrik"))
+	s.Set("name1", "Fredrik")
 
 	v, _ = s.Get("name1")
-	assert.Equal(t, "Fredrik", string(v))
+	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name1")
+}
+
+func TestGetSetMap(t *testing.T) {
+	s := Open()
+
+	v, _ := s.Get("map")
+	assert.Nil(t, v)
+
+	s.Set("map", map[string]interface{}{"hello": "world"})
+
+	v, _ = s.Get("map")
+	assert.Equal(t, "world", v.(map[string]interface{})["hello"].(string))
+
+	s.Delete("map")
 }
 
 func TestCount(t *testing.T) {
@@ -64,10 +76,10 @@ func TestDeleteSimple(t *testing.T) {
 	v, _ := s.Get("name4")
 	assert.Nil(t, v)
 
-	s.Set("name4", []byte("Fredrik"))
+	s.Set("name4", "Fredrik")
 
 	v, _ = s.Get("name4")
-	assert.Equal(t, "Fredrik", string(v))
+	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name4")
 	v, _ = s.Get("name4")

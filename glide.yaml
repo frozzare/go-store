@@ -7,6 +7,8 @@ import:
   - leveldb
   - leveldb/opt
 - package: gopkg.in/redis.v5
+- package: gopkg.in/gorethink/gorethink.v3
+  version: ^3.0.0
 testImport:
 - package: github.com/frozzare/go-assert
   version: v1.0.1

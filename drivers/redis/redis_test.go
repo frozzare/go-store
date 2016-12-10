@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/frozzare/go-assert"
-	"gopkg.in/redis.v5"
 )
 
+/*
 func TestCustomClient(t *testing.T) {
 	s := Open(redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -24,19 +24,33 @@ func TestCustomClient(t *testing.T) {
 
 	s.Delete("name")
 }
-
+*/
 func TestGetSetSimple(t *testing.T) {
 	s := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name", "Fredrik")
 
 	v, _ = s.Get("name")
-	assert.Equal(t, "Fredrik", string(v))
+	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name")
+}
+
+func TestGetSetMap(t *testing.T) {
+	s := Open()
+
+	v, _ := s.Get("map")
+	assert.Nil(t, v)
+
+	s.Set("map", map[string]interface{}{"hello": "world"})
+
+	v, _ = s.Get("map")
+	assert.Equal(t, "world", v.(map[string]interface{})["hello"].(string))
+
+	s.Delete("map")
 }
 
 func TestCount(t *testing.T) {
@@ -67,10 +81,10 @@ func TestDeleteSimple(t *testing.T) {
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name", []byte("Fredrik"))
+	s.Set("name", "Fredrik")
 
 	v, _ = s.Get("name")
-	assert.Equal(t, "Fredrik", string(v))
+	assert.Equal(t, "Fredrik", v.(string))
 
 	s.Delete("name")
 	v, _ = s.Get("name")

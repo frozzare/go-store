@@ -1,6 +1,9 @@
 package redis
 
 import (
+	"encoding/json"
+	"reflect"
+
 	"github.com/frozzare/go-store/driver"
 	"gopkg.in/redis.v5"
 )
@@ -14,7 +17,7 @@ type Driver struct {
 func Open(args ...interface{}) driver.Driver {
 	var client *redis.Client
 
-	if len(args) > 0 {
+	if len(args) > 0 && args[0] != nil {
 		client = args[0].(*redis.Client)
 	} else {
 		client = redis.NewClient(&redis.Options{
@@ -43,19 +46,34 @@ func (s *Driver) Exists(key string) bool {
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) ([]byte, error) {
+func (s *Driver) Get(key string) (interface{}, error) {
 	res, err := s.client.Get(key).Result()
 
 	if len(res) == 0 {
 		return nil, err
 	}
 
-	return []byte(res), err
+	var value interface{}
+	if err = json.Unmarshal([]byte(res), &value); err == nil {
+		return value, err
+	}
+
+	return res, err
 }
 
 // Set key with value in store.
-func (s *Driver) Set(key string, value []byte) error {
-	return s.client.Set(key, value, 0).Err()
+func (s *Driver) Set(key string, value interface{}) error {
+	if reflect.TypeOf(value).Kind() != reflect.String {
+		value, err := json.Marshal(value)
+
+		if err != nil {
+			return err
+		}
+
+		return s.client.Set(key, value, 0).Err()
+	}
+
+	return s.client.Set(key, []byte(value.(string)), 0).Err()
 }
 
 // Delete key from store.
