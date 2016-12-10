@@ -6,7 +6,7 @@ import (
 	"github.com/frozzare/go-assert"
 )
 
-func TestCustomClient(t *testing.T) {
+func TestCustomOptions(t *testing.T) {
 	s := Open("/tmp/custom-leveldb.db")
 
 	v, _ := s.Get("name")

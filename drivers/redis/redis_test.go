@@ -7,7 +7,7 @@ import (
 )
 
 /*
-func TestCustomClient(t *testing.T) {
+func TestCustomOptions(t *testing.T) {
 	s := Open(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",

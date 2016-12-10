@@ -4,7 +4,26 @@ import (
 	"testing"
 
 	assert "github.com/frozzare/go-assert"
+
+	r "gopkg.in/gorethink/gorethink.v3"
 )
+
+func TestCustomOptions(t *testing.T) {
+	s := Open(r.ConnectOpts{
+		Address:  "localhost:28015",
+		Database: "custom",
+	}, "custom")
+
+	v, _ := s.Get("name")
+	assert.Nil(t, v)
+
+	s.Set("name", "Fredrik")
+
+	v, _ = s.Get("name")
+	assert.Equal(t, "Fredrik", v.(string))
+
+	s.Delete("name")
+}
 
 func TestGetSetSimple(t *testing.T) {
 	s := Open()
