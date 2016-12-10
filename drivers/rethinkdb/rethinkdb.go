@@ -17,18 +17,19 @@ type Driver struct {
 
 // Open creates a new Redis store.
 func Open(args ...interface{}) driver.Driver {
-	var session *r.Session
-	var err error
+	var options r.ConnectOpts
 	var table string
 
 	if len(args) > 0 && args[0] != nil {
-		session, err = r.Connect(args[0].(r.ConnectOpts))
+		options = args[0].(r.ConnectOpts)
 	} else {
-		session, err = r.Connect(r.ConnectOpts{
+		options = r.ConnectOpts{
 			Address:  "localhost:28015",
 			Database: "store",
-		})
+		}
 	}
+
+	session, err := r.Connect(options)
 
 	if err != nil {
 		log.Fatal(err)
@@ -41,7 +42,13 @@ func Open(args ...interface{}) driver.Driver {
 		table = "store"
 	}
 
-	list, err := r.TableList().Run(session)
+	res, _ := r.DBCreate(options.Database).Run(session)
+
+	defer res.Close()
+
+	res, err = r.TableList().Run(session)
+
+	defer res.Close()
 
 	if err != nil {
 		log.Fatal(err)
@@ -49,7 +56,7 @@ func Open(args ...interface{}) driver.Driver {
 	}
 
 	var existing []string
-	list.All(&existing)
+	res.All(&existing)
 
 	var found bool
 	for _, item := range existing {
