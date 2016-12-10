@@ -16,12 +16,13 @@ var (
 	drivers   = make(map[string]driver.Driver)
 )
 
-// init register the default store driver.
+// init register the default store drivers.
 func init() {
 	Register("rwmutex", &rwmutex.Driver{})
 	Register("redis", &redis.Driver{})
 	Register("boltdb", &boltdb.Driver{})
 	Register("leveldb", &leveldb.Driver{})
+	Register("rethinkdb", &leveldb.Driver{})
 }
 
 // Register makes a store driver available by the provided name.
