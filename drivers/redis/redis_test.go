@@ -3,10 +3,11 @@ package redis
 import (
 	"testing"
 
+	redis "gopkg.in/redis.v3"
+
 	"github.com/frozzare/go-assert"
 )
 
-/*
 func TestCustomClient(t *testing.T) {
 	s := Open(redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -24,7 +25,7 @@ func TestCustomClient(t *testing.T) {
 
 	s.Delete("name")
 }
-*/
+
 func TestGetSetSimple(t *testing.T) {
 	s := Open()
 
