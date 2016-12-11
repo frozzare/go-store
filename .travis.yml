@@ -15,8 +15,10 @@ addons:
 env:
   - GO15VENDOREXPERIMENT=1
 
-script:
+install:
  - mkdir -p $GOPATH/bin
  - which glide >/dev/null || curl https://glide.sh/get | sh
  - glide install
+
+script:
  - go test $(go list ./... | grep -v /vendor/)
