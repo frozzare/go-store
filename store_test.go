@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/frozzare/go-assert"
+	"github.com/frozzare/go-store/drivers/redis"
 	"github.com/frozzare/go-store/drivers/rwmutex"
 )
 
@@ -40,4 +41,11 @@ func TestRegisterSameDriver(t *testing.T) {
 		}
 	}()
 	Register("rwmutex", &rwmutex.Driver{})
+}
+
+func TestRegisterNewDriver(t *testing.T) {
+	Register("redis", &redis.Driver{})
+	driver, err := Open("redis")
+	assert.NotNil(t, driver)
+	assert.Nil(t, err)
 }
