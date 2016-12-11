@@ -103,6 +103,32 @@ func (s *Driver) Exists(key string) bool {
 	return value != nil
 }
 
+// Keys returns a string slice with all keys.
+func (s *Driver) Keys() (keys []string, err error) {
+	defer s.Close()
+
+	err = s.db().View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(s.bucket))
+		if bucket == nil {
+			return fmt.Errorf("Bucket %q not found!", []byte(s.bucket))
+		}
+
+		bucket.ForEach(func(key []byte, value []byte) error {
+			keys = append(keys, string(key))
+
+			return nil
+		})
+
+		return nil
+	})
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	return
+}
+
 // Get value from key in store.
 func (s *Driver) Get(key string) (value interface{}, err error) {
 	defer s.Close()

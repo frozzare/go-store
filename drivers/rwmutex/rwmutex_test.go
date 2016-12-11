@@ -81,3 +81,19 @@ func TestInstance(t *testing.T) {
 	assert.Equal(t, 0, Open().Count())
 	assert.Equal(t, 1, Open("cache").Count())
 }
+
+func TestKeys(t *testing.T) {
+	s := Open()
+
+	k, _ := s.Keys()
+	assert.Equal(t, 0, len(k))
+
+	s.Set("name", "Fredrik")
+
+	k, _ = s.Keys()
+
+	assert.Equal(t, 1, len(k))
+	assert.Equal(t, "name", k[0])
+
+	s.Delete("name")
+}

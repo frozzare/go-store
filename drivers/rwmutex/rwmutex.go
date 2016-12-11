@@ -76,6 +76,21 @@ func (s *Driver) Get(key string) (interface{}, error) {
 	return string(s.data[key]), nil
 }
 
+// Keys returns a string slice with all keys.
+func (s *Driver) Keys() ([]string, error) {
+	s.lock.Lock()
+
+	defer s.lock.Unlock()
+
+	var keys []string
+
+	for key := range s.data {
+		keys = append(keys, key)
+	}
+
+	return keys, nil
+}
+
 // Set key with value in store.
 func (s *Driver) Set(key string, value interface{}) error {
 	s.lock.Lock()

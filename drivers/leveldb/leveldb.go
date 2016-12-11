@@ -105,6 +105,27 @@ func (s *Driver) Get(key string) (interface{}, error) {
 	return string(res), nil
 }
 
+// Keys returns a string slice with all keys.
+func (s *Driver) Keys() ([]string, error) {
+	defer s.Close()
+
+	iter := s.db().NewIterator(nil, nil)
+
+	var keys []string
+
+	for iter.Next() {
+		keys = append(keys, string(iter.Key()))
+	}
+
+	iter.Release()
+
+	if err := iter.Error(); err != nil {
+		return []string{}, err
+	}
+
+	return keys, nil
+}
+
 // Set key with value in store.
 func (s *Driver) Set(key string, value interface{}) error {
 	defer s.Close()

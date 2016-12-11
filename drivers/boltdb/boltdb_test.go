@@ -85,3 +85,19 @@ func TestDeleteSimple(t *testing.T) {
 	v, _ = s.Get("name4")
 	assert.Nil(t, v)
 }
+
+func TestKeys(t *testing.T) {
+	s := Open()
+
+	k, _ := s.Keys()
+	assert.Equal(t, 0, len(k))
+
+	s.Set("name", "Fredrik")
+
+	k, _ = s.Keys()
+
+	assert.Equal(t, 1, len(k))
+	assert.Equal(t, "name", k[0])
+
+	s.Delete("name")
+}

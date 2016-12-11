@@ -61,6 +61,17 @@ func (s *Driver) Get(key string) (interface{}, error) {
 	return res, nil
 }
 
+// Keys returns a string slice with all keys.
+func (s *Driver) Keys() ([]string, error) {
+	res, err := s.client.Keys("*").Result()
+
+	if len(res) == 0 {
+		return []string{}, err
+	}
+
+	return res, nil
+}
+
 // Set key with value in store.
 func (s *Driver) Set(key string, value interface{}) error {
 	if reflect.TypeOf(value).Kind() != reflect.String {

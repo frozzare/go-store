@@ -15,6 +15,9 @@ type Driver interface {
 	// Get returns the value for a key if any.
 	Get(key string) (interface{}, error)
 
+	// Keys returns a string slice with all keys.
+	Keys() ([]string, error)
+
 	// Open opens a new store.
 	Open(args ...interface{}) Driver
 

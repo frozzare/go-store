@@ -127,6 +127,29 @@ func (s *Driver) Get(key string) (interface{}, error) {
 	return row.(map[string]interface{})["value"], nil
 }
 
+// Keys returns a string slice with all keys.
+func (s *Driver) Keys() ([]string, error) {
+	res, err := r.Table(s.table).Run(s.session)
+
+	defer res.Close()
+
+	if err != nil {
+		return []string{}, nil
+	}
+
+	var rows []map[string]interface{}
+
+	res.All(&rows)
+
+	var keys []string
+
+	for _, row := range rows {
+		keys = append(keys, row["id"].(string))
+	}
+
+	return keys, nil
+}
+
 // Set key with value in store.
 func (s *Driver) Set(key string, value interface{}) error {
 	_, err := r.Table(s.table).Insert(map[string]interface{}{
