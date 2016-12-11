@@ -1,6 +1,7 @@
 package rethinkdb
 
 import (
+	"encoding/json"
 	"log"
 	"math/rand"
 
@@ -108,7 +109,7 @@ func (s *Driver) Exists(key string) bool {
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) (interface{}, error) {
+func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 	res, err := r.Table(s.table).Get(key).Run(s.session)
 
 	defer res.Close()
@@ -124,7 +125,23 @@ func (s *Driver) Get(key string) (interface{}, error) {
 		return nil, err
 	}
 
-	return row.(map[string]interface{})["value"], nil
+	value := row.(map[string]interface{})["value"]
+
+	if len(args) == 0 {
+		return value, nil
+	}
+
+	j, err := json.Marshal(value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(j, &args[0]); err != nil {
+		return nil, err
+	}
+
+	return nil, nil
 }
 
 // Keys returns a string slice with all keys.

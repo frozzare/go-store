@@ -13,7 +13,7 @@ type Driver interface {
 	Exists(key string) bool
 
 	// Get returns the value for a key if any.
-	Get(key string) (interface{}, error)
+	Get(key string, args ...interface{}) (interface{}, error)
 
 	// Keys returns a string slice with all keys.
 	Keys() ([]string, error)

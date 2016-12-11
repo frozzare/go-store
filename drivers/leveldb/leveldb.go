@@ -88,7 +88,7 @@ func (s *Driver) Exists(key string) (ret bool) {
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) (interface{}, error) {
+func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 	defer s.Close()
 
 	res, err := s.db().Get([]byte(key), nil)
@@ -98,7 +98,16 @@ func (s *Driver) Get(key string) (interface{}, error) {
 	}
 
 	var value interface{}
+
+	if len(args) > 0 {
+		value = args[0]
+	}
+
 	if err = json.Unmarshal([]byte(res), &value); err == nil {
+		if len(args) > 0 {
+			return nil, nil
+		}
+
 		return value, nil
 	}
 

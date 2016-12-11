@@ -46,7 +46,7 @@ func (s *Driver) Exists(key string) bool {
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) (interface{}, error) {
+func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 	res, err := s.client.Get(key).Result()
 
 	if len(res) == 0 {
@@ -54,7 +54,16 @@ func (s *Driver) Get(key string) (interface{}, error) {
 	}
 
 	var value interface{}
+
+	if len(args) > 0 {
+		value = args[0]
+	}
+
 	if err = json.Unmarshal([]byte(res), &value); err == nil {
+		if len(args) > 0 {
+			return nil, nil
+		}
+
 		return value, nil
 	}
 

@@ -107,3 +107,22 @@ func TestFlush(t *testing.T) {
 	assert.Nil(t, s.Flush())
 	assert.Equal(t, 0, s.Count())
 }
+
+type Person struct {
+	Name string
+}
+
+func TestGetSetSimpleStruct(t *testing.T) {
+	s := Open()
+
+	v, _ := s.Get("name")
+	assert.Nil(t, v)
+
+	s.Set("name", &Person{Name: "Fredrik"})
+
+	var p *Person
+	s.Get("name", &p)
+	assert.Equal(t, "Fredrik", p.Name)
+
+	s.Delete("name")
+}

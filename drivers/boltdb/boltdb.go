@@ -130,7 +130,7 @@ func (s *Driver) Keys() (keys []string, err error) {
 }
 
 // Get value from key in store.
-func (s *Driver) Get(key string) (value interface{}, err error) {
+func (s *Driver) Get(key string, args ...interface{}) (value interface{}, err error) {
 	defer s.Close()
 
 	err = s.db().View(func(tx *bolt.Tx) error {
@@ -145,8 +145,17 @@ func (s *Driver) Get(key string) (value interface{}, err error) {
 		bytes := buffer.Bytes()
 
 		var js interface{}
+
+		if len(args) > 0 {
+			js = args[0]
+		}
+
 		if err = json.Unmarshal(bytes, &js); err == nil {
-			value = js
+			if len(args) > 0 {
+				value = nil
+			} else {
+				value = js
+			}
 		} else if len(bytes) > 0 {
 			value = string(bytes)
 		}
