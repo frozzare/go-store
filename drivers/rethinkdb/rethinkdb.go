@@ -177,7 +177,7 @@ func (s *Driver) Delete(key string) error {
 	return nil
 }
 
-// Close does not exists for Redis driver.
+// Close will close the RethinkDB session.
 func (s *Driver) Close() error {
 	s.session.Close()
 
