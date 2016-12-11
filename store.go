@@ -5,9 +5,6 @@ import (
 	"sync"
 
 	"github.com/frozzare/go-store/driver"
-	"github.com/frozzare/go-store/drivers/boltdb"
-	"github.com/frozzare/go-store/drivers/leveldb"
-	"github.com/frozzare/go-store/drivers/redis"
 	"github.com/frozzare/go-store/drivers/rwmutex"
 )
 
@@ -19,10 +16,6 @@ var (
 // init register the default store drivers.
 func init() {
 	Register("rwmutex", &rwmutex.Driver{})
-	Register("redis", &redis.Driver{})
-	Register("boltdb", &boltdb.Driver{})
-	Register("leveldb", &leveldb.Driver{})
-	Register("rethinkdb", &leveldb.Driver{})
 }
 
 // Register makes a store driver available by the provided name.
