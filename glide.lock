@@ -1,10 +1,20 @@
 hash: 31f245141b760241d6dbd9c6e0e9368b8d2cd3ae7993f0de850947bea14148d3
-updated: 2016-12-10T11:08:01.733151284+01:00
+updated: 2016-12-11T13:19:52.251441497+01:00
 imports:
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+- name: github.com/cenk/backoff
+  version: b02f2bbce11d7ea6b97f282ef1771b0fe2f65ef3
+- name: github.com/golang/protobuf
+  version: 8ee79997227bf9b34611aee7946ae64735e6fd93
+  subpackages:
+  - proto
 - name: github.com/golang/snappy
   version: d9eb7a3d35ec988b8585d4a0068e462c27d28380
+- name: github.com/hailocab/go-hostpool
+  version: e80d13ce29ede4452c43dea11e79b9bc8a15b478
+- name: github.com/Sirupsen/logrus
+  version: 881bee4e20a5d11a6a88a5667c6f292072ac1963
 - name: github.com/syndtr/goleveldb
   version: 6b4daa5362b502898ddf367c5c11deb9e7a5c727
   subpackages:
@@ -20,12 +30,24 @@ imports:
   - leveldb/storage
   - leveldb/table
   - leveldb/util
+- name: golang.org/x/crypto
+  version: b07d8c96772f426812d3fc5530710ec1f3b205e7
+  subpackages:
+  - pbkdf2
 - name: golang.org/x/sys
   version: b699b7032584f0953262cb2788a0ca19bb494703
   subpackages:
   - unix
 - name: gopkg.in/bsm/ratelimit.v1
   version: db14e161995a5177acef654cb0dd785e8ee8bc22
+- name: gopkg.in/fatih/pool.v2
+  version: 20a0a429c5f93de45c90f5f09ea297c25e0929b3
+- name: gopkg.in/gorethink/gorethink.v2
+  version: 016a1d3b4d15951ab2e39bd3596718ba94d298ba
+  subpackages:
+  - encoding
+  - ql2
+  - types
 - name: gopkg.in/gorethink/gorethink.v3
   version: 417badecf1ab14d0d6e38ad82397da2a59e2f6ca
 - name: gopkg.in/redis.v5
