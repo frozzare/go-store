@@ -124,3 +124,11 @@ func (s *Driver) Delete(key string) error {
 func (s *Driver) Close() error {
 	return nil
 }
+
+// Flush will remove all keys and values from the store.
+func (s *Driver) Flush() error {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+	s.data = make(map[string][]byte)
+	return nil
+}

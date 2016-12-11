@@ -26,4 +26,7 @@ type Driver interface {
 
 	// Close will close the driver connection if needed.
 	Close() error
+
+	// Flush will remove all keys and values from the store.
+	Flush() error
 }

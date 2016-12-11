@@ -162,3 +162,19 @@ func (s *Driver) Close() error {
 
 	return nil
 }
+
+// Flush will remove all keys and values from the store.
+func (s *Driver) Flush() error {
+	defer s.Close()
+
+	db := s.db()
+	iter := db.NewIterator(nil, nil)
+
+	for iter.Next() {
+		db.Delete(iter.Key(), nil)
+	}
+
+	iter.Release()
+
+	return nil
+}

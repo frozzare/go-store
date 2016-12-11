@@ -218,3 +218,12 @@ func (s *Driver) Close() error {
 
 	return nil
 }
+
+// Flush will remove all keys and values from the store.
+func (s *Driver) Flush() error {
+	defer s.Close()
+
+	return s.db().Update(func(tx *bolt.Tx) error {
+		return tx.DeleteBucket([]byte(s.bucket))
+	})
+}

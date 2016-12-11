@@ -183,3 +183,14 @@ func (s *Driver) Close() error {
 
 	return nil
 }
+
+// Flush will remove all keys and values from the store.
+func (s *Driver) Flush() error {
+	_, err := r.Table(s.table).Delete().RunWrite(s.session)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

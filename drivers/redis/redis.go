@@ -96,3 +96,12 @@ func (s *Driver) Delete(key string) error {
 func (s *Driver) Close() error {
 	return nil
 }
+
+// Flush will remove all keys and values from the store.
+func (s *Driver) Flush() error {
+	if _, err := s.client.FlushAll().Result(); err != nil {
+		return err
+	}
+
+	return nil
+}

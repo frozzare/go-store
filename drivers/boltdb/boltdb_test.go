@@ -101,3 +101,13 @@ func TestKeys(t *testing.T) {
 
 	s.Delete("name")
 }
+
+func TestFlush(t *testing.T) {
+	s := Open()
+
+	s.Set("name", "Fredrik")
+
+	assert.Equal(t, 1, s.Count())
+	assert.Nil(t, s.Flush())
+	assert.Equal(t, 0, s.Count())
+}
