@@ -19,7 +19,7 @@ type Driver interface {
 	Keys() ([]string, error)
 
 	// Open opens a new store.
-	Open(args ...interface{}) Driver
+	Open(args ...interface{}) (Driver, error)
 
 	// Set key value in store.
 	Set(key string, value interface{}) error

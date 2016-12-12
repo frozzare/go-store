@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
 
 	"os"
@@ -24,9 +23,9 @@ type Driver struct {
 
 // db returns the BoltDB client if existing
 // or creating a new if closed.
-func (s *Driver) db() *bolt.DB {
+func (s *Driver) db() (*bolt.DB, error) {
 	if s.client != nil && !s.closed {
-		return s.client
+		return s.client, nil
 	}
 
 	s.closed = false
@@ -50,7 +49,7 @@ func (s *Driver) db() *bolt.DB {
 	client, err := bolt.Open(path, mode, options)
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	s.client = client
@@ -59,16 +58,16 @@ func (s *Driver) db() *bolt.DB {
 		s.bucket = fmt.Sprintf("%x", md5.Sum([]byte(path)))
 	}
 
-	return client
+	return client, nil
 }
 
 // Open creates a new BoltDB store.
-func Open(args ...interface{}) driver.Driver {
-	return &Driver{args: args}
+func Open(args ...interface{}) (driver.Driver, error) {
+	return &Driver{args: args}, nil
 }
 
 // Open creates a new BoltDB store with a specified instance.
-func (s *Driver) Open(args ...interface{}) driver.Driver {
+func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 	return Open(args...)
 }
 
@@ -76,7 +75,13 @@ func (s *Driver) Open(args ...interface{}) driver.Driver {
 func (s *Driver) Count() (count int64) {
 	defer s.Close()
 
-	err := s.db().View(func(tx *bolt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return 0
+	}
+
+	err = db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(s.bucket))
 		if bucket == nil {
 			return fmt.Errorf("Bucket %q not found!", []byte(s.bucket))
@@ -108,7 +113,13 @@ func (s *Driver) Exists(key string) bool {
 func (s *Driver) Keys() (keys []string, err error) {
 	defer s.Close()
 
-	err = s.db().View(func(tx *bolt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	err = db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(s.bucket))
 		if bucket == nil {
 			return fmt.Errorf("Bucket %q not found!", []byte(s.bucket))
@@ -134,7 +145,13 @@ func (s *Driver) Keys() (keys []string, err error) {
 func (s *Driver) Get(key string, args ...interface{}) (value interface{}, err error) {
 	defer s.Close()
 
-	err = s.db().View(func(tx *bolt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(s.bucket))
 		if bucket == nil {
 			return fmt.Errorf("Bucket %q not found!", []byte(s.bucket))
@@ -171,7 +188,13 @@ func (s *Driver) Get(key string, args ...interface{}) (value interface{}, err er
 func (s *Driver) Set(key string, value interface{}) error {
 	defer s.Close()
 
-	return s.db().Update(func(tx *bolt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	return db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(s.bucket))
 		if err != nil {
 			return err
@@ -201,7 +224,13 @@ func (s *Driver) Set(key string, value interface{}) error {
 func (s *Driver) Delete(key string) error {
 	defer s.Close()
 
-	return s.db().Update(func(tx *bolt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	return db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(s.bucket))
 		if err != nil {
 			return err
@@ -218,7 +247,13 @@ func (s *Driver) Delete(key string) error {
 
 // Close will close the boltdb client.
 func (s *Driver) Close() error {
-	err := s.db().Close()
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	err = db.Close()
 
 	if err != nil {
 		return err
@@ -232,8 +267,13 @@ func (s *Driver) Close() error {
 // Flush will remove all keys and values from the store.
 func (s *Driver) Flush() error {
 	defer s.Close()
+	db, err := s.db()
 
-	return s.db().Update(func(tx *bolt.Tx) error {
+	if err != nil {
+		return err
+	}
+
+	return db.Update(func(tx *bolt.Tx) error {
 		return tx.DeleteBucket([]byte(s.bucket))
 	})
 }

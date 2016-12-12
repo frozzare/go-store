@@ -2,7 +2,6 @@ package leveldb
 
 import (
 	"encoding/json"
-	"log"
 	"reflect"
 
 	"github.com/frozzare/go-store/driver"
@@ -19,9 +18,9 @@ type Driver struct {
 
 // db returns the LevelDB client if existing
 // or creating a new if closed.
-func (s *Driver) db() *leveldb.DB {
+func (s *Driver) db() (*leveldb.DB, error) {
 	if s.client != nil && !s.closed {
-		return s.client
+		return s.client, nil
 	}
 
 	s.closed = false
@@ -40,21 +39,21 @@ func (s *Driver) db() *leveldb.DB {
 	client, err := leveldb.OpenFile(path, options)
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	s.client = client
 
-	return client
+	return client, nil
 }
 
 // Open creates a new LevelDB store.
-func Open(args ...interface{}) driver.Driver {
-	return &Driver{args: args}
+func Open(args ...interface{}) (driver.Driver, error) {
+	return &Driver{args: args}, nil
 }
 
 // Open creates a new LevelDB store with a specified instance.
-func (s *Driver) Open(args ...interface{}) driver.Driver {
+func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 	return Open(args...)
 }
 
@@ -62,7 +61,13 @@ func (s *Driver) Open(args ...interface{}) driver.Driver {
 func (s *Driver) Count() (count int64) {
 	defer s.Close()
 
-	iter := s.db().NewIterator(nil, nil)
+	db, err := s.db()
+
+	if err != nil {
+		return 0
+	}
+
+	iter := db.NewIterator(nil, nil)
 
 	for iter.Next() {
 		count++
@@ -78,8 +83,14 @@ func (s *Driver) Count() (count int64) {
 }
 
 // Exists returns true when a key exists false when not existing in store.
-func (s *Driver) Exists(key string) (ret bool) {
-	ret, err := s.db().Has([]byte(key), nil)
+func (s *Driver) Exists(key string) (exists bool) {
+	db, err := s.db()
+
+	if err != nil {
+		return false
+	}
+
+	exists, err = db.Has([]byte(key), nil)
 
 	if err != nil {
 		return false
@@ -92,7 +103,13 @@ func (s *Driver) Exists(key string) (ret bool) {
 func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 	defer s.Close()
 
-	res, err := s.db().Get([]byte(key), nil)
+	db, err := s.db()
+
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := db.Get([]byte(key), nil)
 
 	if err != nil {
 		return nil, err
@@ -119,7 +136,13 @@ func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 func (s *Driver) Keys() ([]string, error) {
 	defer s.Close()
 
-	iter := s.db().NewIterator(nil, nil)
+	db, err := s.db()
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	iter := db.NewIterator(nil, nil)
 
 	var keys []string
 
@@ -140,6 +163,12 @@ func (s *Driver) Keys() ([]string, error) {
 func (s *Driver) Set(key string, value interface{}) error {
 	defer s.Close()
 
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
 	if reflect.TypeOf(value).Kind() != reflect.String {
 		value, err := json.Marshal(value)
 
@@ -147,22 +176,34 @@ func (s *Driver) Set(key string, value interface{}) error {
 			return err
 		}
 
-		return s.db().Put([]byte(key), value, nil)
+		return db.Put([]byte(key), value, nil)
 	}
 
-	return s.db().Put([]byte(key), []byte(value.(string)), nil)
+	return db.Put([]byte(key), []byte(value.(string)), nil)
 }
 
 // Delete key from store.
 func (s *Driver) Delete(key string) error {
 	defer s.Close()
 
-	return s.db().Delete([]byte(key), nil)
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	return db.Delete([]byte(key), nil)
 }
 
 // Close will close the boltdb client.
 func (s *Driver) Close() error {
-	err := s.db().Close()
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	err = db.Close()
 
 	if err != nil {
 		return err
@@ -175,9 +216,14 @@ func (s *Driver) Close() error {
 
 // Flush will remove all keys and values from the store.
 func (s *Driver) Flush() error {
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
 	defer s.Close()
 
-	db := s.db()
 	iter := db.NewIterator(nil, nil)
 
 	for iter.Next() {

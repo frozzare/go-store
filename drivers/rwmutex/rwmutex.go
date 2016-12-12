@@ -20,7 +20,7 @@ type Driver struct {
 }
 
 // Open creates a new RWMutex store.
-func Open(args ...interface{}) driver.Driver {
+func Open(args ...interface{}) (driver.Driver, error) {
 	name := ""
 	if len(args) > 0 {
 		name = args[0].(string)
@@ -34,11 +34,11 @@ func Open(args ...interface{}) driver.Driver {
 		instances[name] = &Driver{data: make(map[string][]byte)}
 	}
 
-	return instances[name]
+	return instances[name], nil
 }
 
 // Open creates a new RWMutex store with a specified instance.
-func (s *Driver) Open(args ...interface{}) driver.Driver {
+func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 	return Open(args...)
 }
 

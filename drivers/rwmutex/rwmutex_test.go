@@ -6,8 +6,24 @@ import (
 	"github.com/frozzare/go-assert"
 )
 
+func TestInstance(t *testing.T) {
+	s, _ := Open()
+	assert.Equal(t, 0, s.Count())
+
+	s, _ = Open("cache")
+	assert.Equal(t, 0, s.Count())
+
+	s.Set("name", "Fredrik")
+
+	s, _ = Open()
+	assert.Equal(t, 0, s.Count())
+
+	s, _ = Open("cache")
+	assert.Equal(t, 1, s.Count())
+}
+
 func TestGetSetSimple(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
@@ -21,7 +37,7 @@ func TestGetSetSimple(t *testing.T) {
 }
 
 func TestGetSetMap(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("map")
 	assert.Nil(t, v)
@@ -35,7 +51,7 @@ func TestGetSetMap(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	assert.Equal(t, 0, s.Count())
 
@@ -46,7 +62,7 @@ func TestCount(t *testing.T) {
 }
 
 func TestExists(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	assert.False(t, s.Exists("name"))
 
@@ -57,7 +73,7 @@ func TestExists(t *testing.T) {
 }
 
 func TestDeleteSimple(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
@@ -72,18 +88,8 @@ func TestDeleteSimple(t *testing.T) {
 	assert.Nil(t, v)
 }
 
-func TestInstance(t *testing.T) {
-	assert.Equal(t, 0, Open().Count())
-	assert.Equal(t, 0, Open("cache").Count())
-
-	Open("cache").Set("name", "Fredrik")
-
-	assert.Equal(t, 0, Open().Count())
-	assert.Equal(t, 1, Open("cache").Count())
-}
-
 func TestKeys(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	k, _ := s.Keys()
 	assert.Equal(t, 0, len(k))
@@ -99,7 +105,7 @@ func TestKeys(t *testing.T) {
 }
 
 func TestFlush(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	s.Set("name", "Fredrik")
 
@@ -113,7 +119,7 @@ type Person struct {
 }
 
 func TestGetSetSimpleStruct(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)

@@ -7,7 +7,7 @@ import (
 )
 
 func TestCustomOptions(t *testing.T) {
-	s := Open("/tmp/custom-boltdb.db")
+	s, _ := Open("/tmp/custom-boltdb.db")
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
@@ -21,21 +21,21 @@ func TestCustomOptions(t *testing.T) {
 }
 
 func TestGetSetSimple(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
-	v, _ := s.Get("name1")
+	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name1", "Fredrik")
+	s.Set("name", "Fredrik")
 
-	v, _ = s.Get("name1")
+	v, _ = s.Get("name")
 	assert.Equal(t, "Fredrik", v.(string))
 
-	s.Delete("name1")
+	s.Delete("name")
 }
 
 func TestGetSetMap(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("map")
 	assert.Nil(t, v)
@@ -49,45 +49,45 @@ func TestGetSetMap(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	assert.Equal(t, 0, s.Count())
 
-	s.Set("name2", []byte("Fredrik"))
+	s.Set("name", []byte("Fredrik"))
 	assert.Equal(t, 1, s.Count())
 
-	s.Delete("name2")
+	s.Delete("name")
 }
 
 func TestExists(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
-	assert.False(t, s.Exists("name3"))
+	assert.False(t, s.Exists("name"))
 
-	s.Set("name3", []byte("Fredrik"))
-	assert.True(t, s.Exists("name3"))
+	s.Set("name", []byte("Fredrik"))
+	assert.True(t, s.Exists("name"))
 
-	s.Delete("name3")
+	s.Delete("name")
 }
 
 func TestDeleteSimple(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
-	v, _ := s.Get("name4")
+	v, _ := s.Get("name")
 	assert.Nil(t, v)
 
-	s.Set("name4", "Fredrik")
+	s.Set("name", "Fredrik")
 
-	v, _ = s.Get("name4")
+	v, _ = s.Get("name")
 	assert.Equal(t, "Fredrik", v.(string))
 
-	s.Delete("name4")
-	v, _ = s.Get("name4")
+	s.Delete("name")
+	v, _ = s.Get("name")
 	assert.Nil(t, v)
 }
 
 func TestKeys(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	k, _ := s.Keys()
 	assert.Equal(t, 0, len(k))
@@ -103,7 +103,7 @@ func TestKeys(t *testing.T) {
 }
 
 func TestFlush(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	s.Set("name", "Fredrik")
 
@@ -117,7 +117,7 @@ type Person struct {
 }
 
 func TestGetSetSimpleStruct(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)

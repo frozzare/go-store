@@ -2,7 +2,6 @@ package buntdb
 
 import (
 	"encoding/json"
-	"log"
 	"reflect"
 
 	bunt "github.com/tidwall/buntdb"
@@ -19,9 +18,9 @@ type Driver struct {
 
 // db returns the BundDB client if existing
 // or creating a new if closed.
-func (s *Driver) db() *bunt.DB {
+func (s *Driver) db() (*bunt.DB, error) {
 	if s.client != nil && !s.closed {
-		return s.client
+		return s.client, nil
 	}
 
 	s.closed = false
@@ -35,21 +34,21 @@ func (s *Driver) db() *bunt.DB {
 	db, err := bunt.Open(path)
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	s.client = db
 
-	return s.client
+	return s.client, nil
 }
 
 // Open creates a new BundDB store.
-func Open(args ...interface{}) driver.Driver {
-	return &Driver{args: args}
+func Open(args ...interface{}) (driver.Driver, error) {
+	return &Driver{args: args}, nil
 }
 
 // Open creates a new BundDB store with a specified instance.
-func (s *Driver) Open(args ...interface{}) driver.Driver {
+func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 	return Open(args...)
 }
 
@@ -57,7 +56,13 @@ func (s *Driver) Open(args ...interface{}) driver.Driver {
 func (s *Driver) Count() (count int64) {
 	defer s.Close()
 
-	err := s.db().View(func(tx *bunt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return 0
+	}
+
+	err = db.View(func(tx *bunt.Tx) error {
 		return tx.Ascend("", func(key, value string) bool {
 			count++
 
@@ -76,7 +81,13 @@ func (s *Driver) Count() (count int64) {
 func (s *Driver) Exists(key string) (exists bool) {
 	defer s.Close()
 
-	err := s.db().View(func(tx *bunt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return false
+	}
+
+	err = db.View(func(tx *bunt.Tx) error {
 		v, err := tx.Get(key)
 
 		if err != nil {
@@ -99,7 +110,13 @@ func (s *Driver) Exists(key string) (exists bool) {
 func (s *Driver) Keys() (keys []string, err error) {
 	defer s.Close()
 
-	err = s.db().View(func(tx *bunt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	err = db.View(func(tx *bunt.Tx) error {
 		return tx.Ascend("", func(key, value string) bool {
 			keys = append(keys, key)
 
@@ -118,7 +135,13 @@ func (s *Driver) Keys() (keys []string, err error) {
 func (s *Driver) Get(key string, args ...interface{}) (value interface{}, err error) {
 	defer s.Close()
 
-	err = s.db().View(func(tx *bunt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.View(func(tx *bunt.Tx) error {
 		val, err := tx.Get(key)
 
 		if err != nil {
@@ -145,7 +168,13 @@ func (s *Driver) Get(key string, args ...interface{}) (value interface{}, err er
 func (s *Driver) Set(key string, value interface{}) error {
 	defer s.Close()
 
-	return s.db().Update(func(tx *bunt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	return db.Update(func(tx *bunt.Tx) error {
 		if reflect.TypeOf(value).Kind() != reflect.String {
 			value, err := json.Marshal(value)
 
@@ -167,7 +196,13 @@ func (s *Driver) Set(key string, value interface{}) error {
 func (s *Driver) Delete(key string) error {
 	defer s.Close()
 
-	return s.db().Update(func(tx *bunt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	return db.Update(func(tx *bunt.Tx) error {
 		_, err := tx.Delete(key)
 
 		return err
@@ -176,7 +211,13 @@ func (s *Driver) Delete(key string) error {
 
 // Close will close the boltdb client.
 func (s *Driver) Close() error {
-	err := s.db().Close()
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	err = db.Close()
 
 	if err != nil {
 		return err
@@ -191,7 +232,13 @@ func (s *Driver) Close() error {
 func (s *Driver) Flush() error {
 	defer s.Close()
 
-	return s.db().Update(func(tx *bunt.Tx) error {
+	db, err := s.db()
+
+	if err != nil {
+		return err
+	}
+
+	return db.Update(func(tx *bunt.Tx) error {
 		return tx.DeleteAll()
 	})
 }

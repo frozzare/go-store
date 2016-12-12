@@ -54,5 +54,5 @@ func Open(args ...interface{}) (driver.Driver, error) {
 		return nil, fmt.Errorf("store: unknown driver %q (forgotten import?)", name)
 	}
 
-	return driver.Open(args...), nil
+	return driver.Open(args...)
 }

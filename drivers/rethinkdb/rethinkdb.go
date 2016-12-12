@@ -2,7 +2,6 @@ package rethinkdb
 
 import (
 	"encoding/json"
-	"log"
 	"math/rand"
 
 	"github.com/frozzare/go-store/driver"
@@ -17,7 +16,7 @@ type Driver struct {
 }
 
 // Open creates a new Redis store.
-func Open(args ...interface{}) driver.Driver {
+func Open(args ...interface{}) (driver.Driver, error) {
 	var options r.ConnectOpts
 	var table string
 
@@ -33,8 +32,7 @@ func Open(args ...interface{}) driver.Driver {
 	session, err := r.Connect(options)
 
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
 
 	if len(args) > 1 {
@@ -52,8 +50,7 @@ func Open(args ...interface{}) driver.Driver {
 	defer res.Close()
 
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
 
 	var existing []string
@@ -72,15 +69,14 @@ func Open(args ...interface{}) driver.Driver {
 	}
 
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return nil, err
 	}
 
-	return &Driver{session: session, table: table}
+	return &Driver{session: session, table: table}, nil
 }
 
 // Open creates a new Redis store with a specified instance.
-func (s *Driver) Open(args ...interface{}) driver.Driver {
+func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 	return Open(args...)
 }
 

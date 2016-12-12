@@ -14,7 +14,7 @@ type Driver struct {
 }
 
 // Open creates a new Redis store.
-func Open(args ...interface{}) driver.Driver {
+func Open(args ...interface{}) (driver.Driver, error) {
 	var client *redis.Client
 
 	if len(args) > 0 && args[0] != nil {
@@ -27,11 +27,11 @@ func Open(args ...interface{}) driver.Driver {
 		})
 	}
 
-	return &Driver{client: client}
+	return &Driver{client: client}, nil
 }
 
 // Open creates a new Redis store with a specified instance.
-func (s *Driver) Open(args ...interface{}) driver.Driver {
+func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 	return Open(args...)
 }
 

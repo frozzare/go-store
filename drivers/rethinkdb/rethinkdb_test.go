@@ -9,7 +9,7 @@ import (
 )
 
 func TestCustomOptions(t *testing.T) {
-	s := Open(r.ConnectOpts{
+	s, _ := Open(r.ConnectOpts{
 		Address:  "localhost:28015",
 		Database: "custom",
 	}, "custom")
@@ -26,7 +26,7 @@ func TestCustomOptions(t *testing.T) {
 }
 
 func TestGetSetSimple(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
@@ -40,7 +40,7 @@ func TestGetSetSimple(t *testing.T) {
 }
 
 func TestGetSetMap(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("map")
 	assert.Nil(t, v)
@@ -54,7 +54,7 @@ func TestGetSetMap(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	assert.Equal(t, 0, s.Count())
 
@@ -65,7 +65,7 @@ func TestCount(t *testing.T) {
 }
 
 func TestExists(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	assert.False(t, s.Exists("name"))
 
@@ -76,7 +76,7 @@ func TestExists(t *testing.T) {
 }
 
 func TestDeleteSimple(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
@@ -92,7 +92,7 @@ func TestDeleteSimple(t *testing.T) {
 }
 
 func TestKeys(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	k, _ := s.Keys()
 	assert.Equal(t, 0, len(k))
@@ -108,7 +108,7 @@ func TestKeys(t *testing.T) {
 }
 
 func TestFlush(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	s.Set("name", "Fredrik")
 
@@ -122,7 +122,7 @@ type Person struct {
 }
 
 func TestGetSetSimpleStruct(t *testing.T) {
-	s := Open()
+	s, _ := Open()
 
 	v, _ := s.Get("name")
 	assert.Nil(t, v)
