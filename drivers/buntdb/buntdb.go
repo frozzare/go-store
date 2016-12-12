@@ -5,6 +5,8 @@ import (
 	"log"
 	"reflect"
 
+	bult "github.com/tidwall/buntdb"
+
 	"github.com/frozzare/go-store/driver"
 )
 
