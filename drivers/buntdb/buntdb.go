@@ -5,7 +5,7 @@ import (
 	"log"
 	"reflect"
 
-	bult "github.com/tidwall/buntdb"
+	bunt "github.com/tidwall/buntdb"
 
 	"github.com/frozzare/go-store/driver"
 )
@@ -14,12 +14,12 @@ import (
 type Driver struct {
 	args   []interface{}
 	closed bool
-	client *bult.DB
+	client *bunt.DB
 }
 
 // db returns the BundDB client if existing
 // or creating a new if closed.
-func (s *Driver) db() *bult.DB {
+func (s *Driver) db() *bunt.DB {
 	if s.client != nil && !s.closed {
 		return s.client
 	}
@@ -32,7 +32,7 @@ func (s *Driver) db() *bult.DB {
 		path = s.args[0].(string)
 	}
 
-	db, err := bult.Open(path)
+	db, err := bunt.Open(path)
 
 	if err != nil {
 		log.Fatal(err)
@@ -57,7 +57,7 @@ func (s *Driver) Open(args ...interface{}) driver.Driver {
 func (s *Driver) Count() (count int64) {
 	defer s.Close()
 
-	err := s.db().View(func(tx *bult.Tx) error {
+	err := s.db().View(func(tx *bunt.Tx) error {
 		return tx.Ascend("", func(key, value string) bool {
 			count++
 
@@ -76,7 +76,7 @@ func (s *Driver) Count() (count int64) {
 func (s *Driver) Exists(key string) (exists bool) {
 	defer s.Close()
 
-	err := s.db().View(func(tx *bult.Tx) error {
+	err := s.db().View(func(tx *bunt.Tx) error {
 		v, err := tx.Get(key)
 
 		if err != nil {
@@ -99,7 +99,7 @@ func (s *Driver) Exists(key string) (exists bool) {
 func (s *Driver) Keys() (keys []string, err error) {
 	defer s.Close()
 
-	err = s.db().View(func(tx *bult.Tx) error {
+	err = s.db().View(func(tx *bunt.Tx) error {
 		return tx.Ascend("", func(key, value string) bool {
 			keys = append(keys, key)
 
@@ -118,7 +118,7 @@ func (s *Driver) Keys() (keys []string, err error) {
 func (s *Driver) Get(key string, args ...interface{}) (value interface{}, err error) {
 	defer s.Close()
 
-	err = s.db().View(func(tx *bult.Tx) error {
+	err = s.db().View(func(tx *bunt.Tx) error {
 		val, err := tx.Get(key)
 
 		if err != nil {
@@ -145,7 +145,7 @@ func (s *Driver) Get(key string, args ...interface{}) (value interface{}, err er
 func (s *Driver) Set(key string, value interface{}) error {
 	defer s.Close()
 
-	return s.db().Update(func(tx *bult.Tx) error {
+	return s.db().Update(func(tx *bunt.Tx) error {
 		if reflect.TypeOf(value).Kind() != reflect.String {
 			value, err := json.Marshal(value)
 
@@ -167,7 +167,7 @@ func (s *Driver) Set(key string, value interface{}) error {
 func (s *Driver) Delete(key string) error {
 	defer s.Close()
 
-	return s.db().Update(func(tx *bult.Tx) error {
+	return s.db().Update(func(tx *bunt.Tx) error {
 		_, err := tx.Delete(key)
 
 		return err
@@ -191,7 +191,7 @@ func (s *Driver) Close() error {
 func (s *Driver) Flush() error {
 	defer s.Close()
 
-	return s.db().Update(func(tx *bult.Tx) error {
+	return s.db().Update(func(tx *bunt.Tx) error {
 		return tx.DeleteAll()
 	})
 }
