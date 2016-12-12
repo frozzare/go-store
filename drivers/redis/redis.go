@@ -45,7 +45,7 @@ func (s *Driver) Exists(key string) bool {
 	return s.client.Exists(key).Val()
 }
 
-// Get value from key in store.
+// Get returns the value for a key if any.
 func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 	res, err := s.client.Get(key).Result()
 

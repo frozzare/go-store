@@ -58,7 +58,7 @@ func (s *Driver) Exists(key string) bool {
 	return exists
 }
 
-// Get value from key in store.
+// Get returns the value for a key if any.
 func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 	s.lock.RLock()
 

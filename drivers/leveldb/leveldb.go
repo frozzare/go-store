@@ -2,6 +2,7 @@ package leveldb
 
 import (
 	"encoding/json"
+	"log"
 	"reflect"
 
 	"github.com/frozzare/go-store/driver"
@@ -39,7 +40,7 @@ func (s *Driver) db() *leveldb.DB {
 	client, err := leveldb.OpenFile(path, options)
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	s.client = client
@@ -87,7 +88,7 @@ func (s *Driver) Exists(key string) (ret bool) {
 	return
 }
 
-// Get value from key in store.
+// Get returns the value for a key if any.
 func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 	defer s.Close()
 

@@ -108,7 +108,7 @@ func (s *Driver) Exists(key string) bool {
 	return res != nil && err == nil
 }
 
-// Get value from key in store.
+// Get returns the value for a key if any.
 func (s *Driver) Get(key string, args ...interface{}) (interface{}, error) {
 	res, err := r.Table(s.table).Get(key).Run(s.session)
 

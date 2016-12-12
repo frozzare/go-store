@@ -1,12 +1,12 @@
-hash: 31f245141b760241d6dbd9c6e0e9368b8d2cd3ae7993f0de850947bea14148d3
-updated: 2016-12-11T13:19:52.251441497+01:00
+hash: 89801d68feea946afc08a31fc51287bbf62bbe9a420c1553f3d4090ed37b3f32
+updated: 2016-12-12T07:59:09.389521341+01:00
 imports:
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
 - name: github.com/cenk/backoff
-  version: b02f2bbce11d7ea6b97f282ef1771b0fe2f65ef3
+  version: 8edc80b07f38c27352fb186d971c628a6c32552b
 - name: github.com/golang/protobuf
-  version: 8ee79997227bf9b34611aee7946ae64735e6fd93
+  version: 8d92cf5fc15a4382f8964b08e1f42a75c0591aa3
   subpackages:
   - proto
 - name: github.com/golang/snappy
@@ -14,7 +14,7 @@ imports:
 - name: github.com/hailocab/go-hostpool
   version: e80d13ce29ede4452c43dea11e79b9bc8a15b478
 - name: github.com/Sirupsen/logrus
-  version: 881bee4e20a5d11a6a88a5667c6f292072ac1963
+  version: f7f79f729e0fbe2fcc061db48a9ba0263f588252
 - name: github.com/syndtr/goleveldb
   version: 6b4daa5362b502898ddf367c5c11deb9e7a5c727
   subpackages:
@@ -30,12 +30,24 @@ imports:
   - leveldb/storage
   - leveldb/table
   - leveldb/util
+- name: github.com/tidwall/btree
+  version: bde515e1697379bec1427903e54888babf32513a
+- name: github.com/tidwall/buntdb
+  version: 74dc10171b7549022c818bd212a9ddea151db02e
+- name: github.com/tidwall/gjson
+  version: b0e589ad0b7ff467fad157cc07b1381ea0a9708e
+- name: github.com/tidwall/grect
+  version: ba9a043346eba55344e40d66a5e74cfda3a9d293
+- name: github.com/tidwall/match
+  version: 173748da739a410c5b0b813b956f89ff94730b4c
+- name: github.com/tidwall/rtree
+  version: d4a8a3d30d5729f85edfba1745241f3a621d0359
 - name: golang.org/x/crypto
-  version: b07d8c96772f426812d3fc5530710ec1f3b205e7
+  version: 4ed45ec682102c643324fae5dff8dab085b6c300
   subpackages:
   - pbkdf2
 - name: golang.org/x/sys
-  version: b699b7032584f0953262cb2788a0ca19bb494703
+  version: eb2c74142fd19a79b3f237334c7384d5167b1b46
   subpackages:
   - unix
 - name: gopkg.in/bsm/ratelimit.v1

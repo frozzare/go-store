@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"log"
 	"reflect"
 
 	"os"
@@ -30,7 +31,7 @@ func (s *Driver) db() *bolt.DB {
 
 	s.closed = false
 
-	path := "/tmp/store.db"
+	path := "/tmp/store-bolt.db"
 	mode := os.FileMode(0600)
 	options := &bolt.Options{}
 
@@ -49,7 +50,7 @@ func (s *Driver) db() *bolt.DB {
 	client, err := bolt.Open(path, mode, options)
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	s.client = client
@@ -129,7 +130,7 @@ func (s *Driver) Keys() (keys []string, err error) {
 	return
 }
 
-// Get value from key in store.
+// Get returns the value for a key if any.
 func (s *Driver) Get(key string, args ...interface{}) (value interface{}, err error) {
 	defer s.Close()
 
