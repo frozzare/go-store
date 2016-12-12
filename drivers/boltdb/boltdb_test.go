@@ -51,10 +51,12 @@ func TestGetSetMap(t *testing.T) {
 func TestCount(t *testing.T) {
 	s, _ := Open()
 
-	assert.Equal(t, 0, s.Count())
+	c, _ := s.Count()
+	assert.Equal(t, 0, c)
 
 	s.Set("name", []byte("Fredrik"))
-	assert.Equal(t, 1, s.Count())
+	c, _ = s.Count()
+	assert.Equal(t, 1, c)
 
 	s.Delete("name")
 }
@@ -62,10 +64,12 @@ func TestCount(t *testing.T) {
 func TestExists(t *testing.T) {
 	s, _ := Open()
 
-	assert.False(t, s.Exists("name"))
+	e, _ := s.Exists("name")
+	assert.False(t, e)
 
 	s.Set("name", []byte("Fredrik"))
-	assert.True(t, s.Exists("name"))
+	e, _ = s.Exists("name")
+	assert.True(t, e)
 
 	s.Delete("name")
 }
@@ -107,9 +111,13 @@ func TestFlush(t *testing.T) {
 
 	s.Set("name", "Fredrik")
 
-	assert.Equal(t, 1, s.Count())
+	c, _ := s.Count()
+	assert.Equal(t, 1, c)
+
 	assert.Nil(t, s.Flush())
-	assert.Equal(t, 0, s.Count())
+
+	c, _ = s.Count()
+	assert.Equal(t, 0, c)
 }
 
 type Person struct {

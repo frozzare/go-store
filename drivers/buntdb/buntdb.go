@@ -53,13 +53,13 @@ func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 }
 
 // Count returns numbers of keys in store.
-func (s *Driver) Count() (count int64) {
+func (s *Driver) Count() (count int64, err error) {
 	defer s.Close()
 
 	db, err := s.db()
 
 	if err != nil {
-		return 0
+		return
 	}
 
 	err = db.View(func(tx *bunt.Tx) error {
@@ -70,21 +70,17 @@ func (s *Driver) Count() (count int64) {
 		})
 	})
 
-	if err != nil {
-		return 0
-	}
-
 	return
 }
 
 // Exists returns true when a key exists false when not existing in store.
-func (s *Driver) Exists(key string) (exists bool) {
+func (s *Driver) Exists(key string) (exists bool, err error) {
 	defer s.Close()
 
 	db, err := s.db()
 
 	if err != nil {
-		return false
+		return
 	}
 
 	err = db.View(func(tx *bunt.Tx) error {
@@ -98,10 +94,6 @@ func (s *Driver) Exists(key string) (exists bool) {
 
 		return nil
 	})
-
-	if err != nil {
-		return false
-	}
 
 	return
 }

@@ -81,27 +81,27 @@ func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 }
 
 // Count returns numbers of keys in store.
-func (s *Driver) Count() int64 {
+func (s *Driver) Count() (int64, error) {
 	res, err := r.Table(s.table).Count().Run(s.session)
 
 	defer res.Close()
 
 	if err != nil {
-		return 0
+		return 0, err
 	}
 
 	var rows []int
 
 	res.All(&rows)
 
-	return int64(rows[rand.Intn(len(rows))])
+	return int64(rows[rand.Intn(len(rows))]), nil
 }
 
 // Exists returns true when a key exists false when not existing in store.
-func (s *Driver) Exists(key string) bool {
+func (s *Driver) Exists(key string) (bool, error) {
 	res, err := s.Get(key)
 
-	return res != nil && err == nil
+	return res != nil && err == nil, err
 }
 
 // Get returns the value for a key if any.

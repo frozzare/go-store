@@ -58,13 +58,13 @@ func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 }
 
 // Count returns numbers of keys in store.
-func (s *Driver) Count() (count int64) {
+func (s *Driver) Count() (count int64, err error) {
 	defer s.Close()
 
 	db, err := s.db()
 
 	if err != nil {
-		return 0
+		return
 	}
 
 	iter := db.NewIterator(nil, nil)
@@ -76,27 +76,27 @@ func (s *Driver) Count() (count int64) {
 	iter.Release()
 
 	if err := iter.Error(); err != nil {
-		return 0
+		return 0, err
 	}
 
 	return
 }
 
 // Exists returns true when a key exists false when not existing in store.
-func (s *Driver) Exists(key string) (exists bool) {
+func (s *Driver) Exists(key string) (bool, error) {
 	db, err := s.db()
 
 	if err != nil {
-		return false
+		return false, err
 	}
 
-	exists, err = db.Has([]byte(key), nil)
+	exists, err := db.Has([]byte(key), nil)
 
 	if err != nil {
-		return false
+		return false, err
 	}
 
-	return
+	return exists, nil
 }
 
 // Get returns the value for a key if any.

@@ -72,13 +72,13 @@ func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 }
 
 // Count returns numbers of keys in store.
-func (s *Driver) Count() (count int64) {
+func (s *Driver) Count() (count int64, err error) {
 	defer s.Close()
 
 	db, err := s.db()
 
 	if err != nil {
-		return 0
+		return 0, err
 	}
 
 	err = db.View(func(tx *bolt.Tx) error {
@@ -92,21 +92,21 @@ func (s *Driver) Count() (count int64) {
 	})
 
 	if err != nil {
-		return 0
+		return 0, err
 	}
 
 	return
 }
 
 // Exists returns true when a key exists false when not existing in store.
-func (s *Driver) Exists(key string) bool {
+func (s *Driver) Exists(key string) (bool, error) {
 	value, err := s.Get(key)
 
 	if err != nil {
-		return false
+		return false, err
 	}
 
-	return value != nil
+	return value != nil, nil
 }
 
 // Keys returns a string slice with all keys.

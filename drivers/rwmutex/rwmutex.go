@@ -43,19 +43,20 @@ func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 }
 
 // Count returns numbers of keys in store.
-func (s *Driver) Count() int64 {
+func (s *Driver) Count() (int64, error) {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
-	return int64(len(s.data))
+	return int64(len(s.data)), nil
 }
 
 // Exists returns true when a key exists false when not existing in store.
-func (s *Driver) Exists(key string) bool {
+func (s *Driver) Exists(key string) (bool, error) {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 
 	_, exists := s.data[key]
-	return exists
+
+	return exists, nil
 }
 
 // Get returns the value for a key if any.

@@ -36,13 +36,13 @@ func (s *Driver) Open(args ...interface{}) (driver.Driver, error) {
 }
 
 // Count returns numbers of keys in store.
-func (s *Driver) Count() int64 {
-	return s.client.DbSize().Val()
+func (s *Driver) Count() (int64, error) {
+	return s.client.DbSize().Result()
 }
 
 // Exists returns true when a key exists false when not existing in store.
-func (s *Driver) Exists(key string) bool {
-	return s.client.Exists(key).Val()
+func (s *Driver) Exists(key string) (bool, error) {
+	return s.client.Exists(key).Result()
 }
 
 // Get returns the value for a key if any.

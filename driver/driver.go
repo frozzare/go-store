@@ -4,13 +4,13 @@ package driver
 // by a store driver.
 type Driver interface {
 	// Count counts the number of keys in the store.
-	Count() int64
+	Count() (int64, error)
 
 	// Delete delets a key and value from store if any.
 	Delete(key string) error
 
 	// Exists checks if a key exists in the store.
-	Exists(key string) bool
+	Exists(key string) (bool, error)
 
 	// Get returns the value for a key if any.
 	Get(key string, args ...interface{}) (interface{}, error)
