@@ -6,26 +6,6 @@ import (
 	"github.com/frozzare/go-assert"
 )
 
-func TestInstance(t *testing.T) {
-	s, _ := Open()
-	c, _ := s.Count()
-	assert.Equal(t, 0, c)
-
-	s, _ = Open("cache")
-	c, _ = s.Count()
-	assert.Equal(t, 0, c)
-
-	s.Set("name", "Fredrik")
-
-	s, _ = Open()
-	c, _ = s.Count()
-	assert.Equal(t, 0, c)
-
-	s, _ = Open("cache")
-	c, _ = s.Count()
-	assert.Equal(t, 1, c)
-}
-
 func TestGetSetSimple(t *testing.T) {
 	s, _ := Open()
 

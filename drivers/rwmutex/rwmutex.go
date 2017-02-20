@@ -8,11 +8,6 @@ import (
 	"github.com/frozzare/go-store/driver"
 )
 
-var (
-	instancesMu sync.RWMutex
-	instances   = make(map[string]driver.Driver)
-)
-
 // Driver represents a rwmutex driver.
 type Driver struct {
 	lock sync.RWMutex
@@ -21,20 +16,7 @@ type Driver struct {
 
 // Open creates a new RWMutex store.
 func Open(args ...interface{}) (driver.Driver, error) {
-	name := ""
-	if len(args) > 0 {
-		name = args[0].(string)
-	}
-
-	instancesMu.Lock()
-
-	defer instancesMu.Unlock()
-
-	if instances[name] == nil {
-		instances[name] = &Driver{data: make(map[string][]byte)}
-	}
-
-	return instances[name], nil
+	return &Driver{data: make(map[string][]byte)}, nil
 }
 
 // Open creates a new RWMutex store with a specified instance.
